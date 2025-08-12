@@ -1,68 +1,62 @@
-import typing
 from pygame import Surface
-from pymunk import Space, Body, Poly
-import csv
+from pymunk import Space
 import typing
+from statemachine import State
 
+from GameConfig import Config
+from PhysicsBody import RaiderPhysicsBody
 from CharacterStateMachine import RaiderCharacterSM
-from StatefulSprite import StatefulSprite
+from SpriteManager import SpriteActor
 
 
 class Raider:
 
   def __init__(self, screen: Surface, space: Space):
-    self.rect = None
-    self.sm = RaiderCharacterSM()
-    self.sprite_by_state: typing.Dict[str, StatefulSprite] = {}
-
-    with open("./assets/Raider_1_spritelist.psd.txt", 'r') as state_file:
-      for [sprite_file, _top, _left, state] in csv.reader(state_file, delimiter=' '):
-        if state not in self.sprite_by_state:
-          self.sprite_by_state[state] = StatefulSprite(screen, "Raider", 150)
-
-        self.sprite_by_state[state].add_frame("./assets/Raider_1/" + sprite_file)
-
-    self.body = Body(mass=50)
-    self.body.position = (300, 300)
-    self.shapes = {
-        "idle": Poly.create_box(self.body, self.sprite_by_state["idle"].get_size()),
-        "run": Poly.create_box(self.body, self.sprite_by_state["run"].get_size()),
-        "jump": Poly.create_box(self.body, self.sprite_by_state["jump"].get_size())
-    }
-    self.space = space
-    self.space.add(self.body, self.shapes["idle"])
+    self.sprite_actor = SpriteActor(screen, "./assets/Raider_sprite_list.txt", "./assets/Raider_1/")
+    self.physics = RaiderPhysicsBody(
+        space, {
+            "idle": self.sprite_actor.get_size("idle"),
+            "run": self.sprite_actor.get_size("run"),
+            "jump": self.sprite_actor.get_size("jump"),
+        }, "idle")
+    self.face_left = False
     self.screen_height = screen.get_height()
+    self.sm = RaiderCharacterSM({"idle": self.on_enter_idle, "jump": self.on_enter_jump, "run": self.on_enter_run})
 
-  def get_sprite(self):
-    return self.sprite_by_state[self.sm.current_state.name.lower()]
+  def on_enter_idle(self, _event: str, source: State):
+    self.physics.set_velocity((0, 0))
+
+  def on_enter_jump(self, _event: str, source: State):
+    if source == RaiderCharacterSM.run:
+      self.physics.apply_force(Config.raider_diagonal_jump)
+    elif source == RaiderCharacterSM.idle:
+      self.physics.apply_force(Config.raider_vertical_jump)
+
+  def on_enter_run(self):
+    self.physics.set_velocity(Config.raider_run_velocity)
 
   def update(self, dt: float):
-    self.get_sprite().update(dt)
+    self.sprite_actor.update(self.sm.current_state.name.lower(), dt)
 
   def draw(self):
-    bb = self.shapes["idle"].cache_bb()
-    self.get_sprite().draw((bb.left, self.screen_height - bb.bottom))
+    # TODO: make this to be the "active" shape
+    bb = self.physics.get_bounding_box()
+    self.sprite_actor.draw(self.sm.current_state.name.lower(), (bb.left, self.screen_height - bb.bottom),
+                           self.face_left)
 
   def run_right(self):
-    if self.sm.current_state == RaiderCharacterSM.idle:
-      self.body.velocity = (20, 0)
+    self.face_left = False
     self.sm.trigger_run()
 
   def run_left(self):
+    self.face_left = True
     self.sm.trigger_run()
 
   def stop_run(self):
     self.sm.stop_run()
 
   def jump(self):
-    if self.sm.current_state == RaiderCharacterSM.run:
-      self.body.apply_force_at_local_point((5000, -5000))
-    elif self.sm.current_state == RaiderCharacterSM.idle:
-      self.body.apply_force_at_local_point((0, -5000))
     self.sm.trigger_jump()
 
   def finish_jump(self):
     self.sm.finish_jump()
-
-  def get_jump_duration(self):
-    return 1200
