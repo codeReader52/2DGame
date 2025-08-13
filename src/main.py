@@ -9,6 +9,7 @@ pygame.init()
 clock = pygame.time.Clock()
 FRAMES_PER_MIN = 60
 BACKGROUND_COLOR = (225, 225, 225)
+STOP_ATTACK_EVENT = pygame.USEREVENT + 1
 
 screen = pygame.display.set_mode((1000, 800))
 pygame.display.set_caption("2D Game")
@@ -27,6 +28,8 @@ while True:
     if event.type == pygame.QUIT:
       pygame.quit()
       exit()
+    elif event.type == STOP_ATTACK_EVENT:
+      raider.finish_attack()
     elif event.type == pygame.KEYDOWN:
       if event.key == pygame.K_ESCAPE:
         pygame.quit()
@@ -35,8 +38,11 @@ while True:
         raider.run_right()
       elif event.key == pygame.K_LEFT:
         raider.run_left()
-      elif event.key == pygame.K_SPACE:
+      elif event.key == pygame.K_c:
         raider.jump()
+      elif event.key == pygame.K_x:
+        raider.attack()
+        pygame.time.set_timer(STOP_ATTACK_EVENT, Config.attack_duration_ms, loops=1)
     elif event.type == pygame.KEYUP:
       if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
         raider.stop_run()
