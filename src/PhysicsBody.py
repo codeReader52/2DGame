@@ -1,4 +1,4 @@
-from pymunk import Body, Poly, Space, moment_for_box
+from pymunk import Body, Poly, Space, moment_for_box, Vec2d
 import typing
 
 from GameConfig import Config
@@ -10,7 +10,6 @@ class RaiderPhysicsBody:
   def __init__(self, space: Space, body_size_by_state: typing.Dict[str, typing.Tuple[float, float]], initial_state):
     self.body = Body(mass=Config.raider_mass)
     self.body.position = Config.raider_initial_position
-
     self.shapes: typing.Dict[str, Poly] = {}
     for state, body_size in body_size_by_state.items():
       self.shapes[state] = Poly.create_box(self.body, body_size)
@@ -21,10 +20,10 @@ class RaiderPhysicsBody:
     self.space.add(self.body, self.shapes[initial_state])
     self.current_state = initial_state
 
-  def apply_force(self, force: typing.Tuple[float, float]):
+  def apply_force(self, force: Vec2d):
     self.body.apply_force_at_local_point(force)
 
-  def set_velocity(self, velocity: typing.Tuple[float, float]):
+  def set_velocity(self, velocity: Vec2d):
     self.body.velocity = velocity
 
   def get_bounding_box(self):

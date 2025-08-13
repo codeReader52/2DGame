@@ -31,8 +31,7 @@ class StatefulSprite:
       self.screen.blit(pygame.transform.flip(self.frames[self.active_frame_index], True, False),
                        pygame.Rect(lower_left[0], lower_left[1] - height, width, height))
     else:
-      self.screen.blit(self.frames[self.active_frame_index],
-                       pygame.Rect(lower_left[0], lower_left[1] - height, width, height))
+      self.screen.blit(self.frames[self.active_frame_index], pygame.Rect(lower_left[0], lower_left[1] - height, width, height))
 
   def get_size(self):
     active_frame = self.frames[self.active_frame_index]
