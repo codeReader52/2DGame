@@ -3,17 +3,17 @@ from pymunk import Space, Vec2d
 from statemachine import State
 
 from GameConfig import Config
-from PhysicsBody import RaiderPhysicsBody
+from PhysicsComponent import PhysicsComponent
 from CharacterStateMachine import RaiderCharacterSM, DirectionsM
-from SpriteManager import SpriteActor
+from SpriteComponent import SpriteComponent
 
 
 class Raider:
 
   def __init__(self, screen: Surface, space: Space):
-    self.sprite_actor = SpriteActor(screen, "./assets/Raider_sprite_list.txt", "./assets/Raider_1/")
-    self.physics = RaiderPhysicsBody(
-        space, {
+    self.sprite_actor = SpriteComponent(screen, "./assets/Raider_sprite_list.txt", "./assets/Raider_1/")
+    self.physics = PhysicsComponent(
+        space, Config.raider_mass, (Config.raider_initial_position[0], screen.get_height() - Config.raider_initial_position[1]), {
             "idle": self.sprite_actor.get_size("idle"),
             "run": self.sprite_actor.get_size("run"),
             "jump": self.sprite_actor.get_size("jump"),

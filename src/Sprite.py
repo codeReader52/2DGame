@@ -2,7 +2,7 @@ import pygame
 import typing
 
 
-class StatefulSprite:
+class SpriteActor:
 
   def __init__(self, screen: pygame.Surface, name, frame_live_time):
     self.screen = screen

@@ -3,7 +3,7 @@ import pymunk
 from Raider import Raider
 from GameConfig import Config
 from Ground import Ground
-from PhysicsBody import RaiderPhysicsBody
+from PhysicsComponent import PhysicsComponent
 from HealthBar import HealthBar
 from Goomba import Enemy
 
@@ -22,9 +22,9 @@ space.gravity = Config.gravity
 ground = Ground(screen, space)
 raider = Raider(screen, space)
 health_bar = HealthBar(450, 10, screen)
-enemy = Enemy([300, 0], 20, screen)
+enemy = Enemy(space, Config.enemy_mass, Config.enemy_initial_position, Config.enemy_radius, Config.enemy_elasticity, screen)
 
-space.on_collision(Ground.COLLISION_TYPE, RaiderPhysicsBody.COLLISION_TYPE, begin=lambda *args: raider.finish_jump())
+space.on_collision(Ground.COLLISION_TYPE, PhysicsComponent.COLLISION_TYPE, begin=lambda *_a: raider.finish_jump())
 dt = 0
 
 while True:
@@ -66,4 +66,5 @@ while True:
   enemy.draw()
   health_bar.draw()
   pygame.display.update()
+
   dt = clock.tick(FRAMES_PER_MIN)
