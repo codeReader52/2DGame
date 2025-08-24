@@ -8,6 +8,7 @@ class RaiderCharacterSM(StateMachine):
   jump_idle = State()
   attack_run = State()
   attack_idle = State()
+  die = State(final=True)
 
   trigger_run = idle.to(run) | jump_idle.to(jump_run) | attack_idle.to(attack_run)
   trigger_attack = idle.to(attack_idle) | run.to(attack_run)
@@ -15,6 +16,7 @@ class RaiderCharacterSM(StateMachine):
   stop_run = run.to(idle) | jump_run.to(jump_idle) | attack_run.to(attack_idle)
   trigger_jump = idle.to(jump_idle) | run.to(jump_run)
   finish_jump = jump_idle.to(idle) | jump_run.to(run)
+  trigger_die = idle.to(die) | jump_idle.to(die) | attack_idle.to(die) | run.to(die) | attack_run.to(die) | jump_run.to(die)
 
   def is_jumping(self):
     return self.current_state in [self.jump_idle, self.jump_run]
@@ -25,6 +27,7 @@ class RaiderCharacterSM(StateMachine):
   def get_state_name(self):
     if self.current_state == self.idle: return "idle"
     elif self.current_state == self.run: return "run"
+    elif self.current_state == self.die: return "die"
     elif self.is_attacking(): return "attack"
     else: return "jump"
 

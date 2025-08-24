@@ -1,18 +1,12 @@
 import pygame
 
 
-class HealthBar:
+class HealthBar2:
 
-  def __init__(self, width, height, screen):
-    self.health = 100
-    self.width = width
-    self.height = height
+  def __init__(self, health, screen):
+    self.health = health
     self.screen = screen
 
   def draw(self):
-    pygame.draw.rect(self.screen, (255, 0, 0), pygame.Rect(400, 10, self.width, self.height))
-    pygame.draw.rect(self.screen, (
-        0,
-        255,
-        0,
-    ), pygame.Rect(400, 10, self.width * self.health / 100, self.height))
+    pygame.draw.rect(self.screen, [255, 0, 0], pygame.Rect(400, 20, 500, 15))
+    pygame.draw.rect(self.screen, [0, 255, 0], pygame.Rect(400, 20, self.health * 5, 15))

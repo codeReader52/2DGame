@@ -9,16 +9,21 @@ from SpriteComponent import SpriteComponent
 
 
 class Raider:
+  COLLISION_TYPE = 2
 
   def __init__(self, screen: Surface, space: Space):
     self.sprite_actor = SpriteComponent(screen, "./assets/Raider_sprite_list.txt", "./assets/Raider_1/")
-    self.physics = PhysicsComponent(
-        space, Config.raider_mass, (Config.raider_initial_position[0], screen.get_height() - Config.raider_initial_position[1]), {
-            "idle": self.sprite_actor.get_size("idle"),
-            "run": self.sprite_actor.get_size("run"),
-            "jump": self.sprite_actor.get_size("jump"),
-            "attack": self.sprite_actor.get_size("attack"),
-        }, "idle")
+    self.physics = PhysicsComponent(space,
+                                    Config.raider_mass, (Config.raider_initial_position[0], screen.get_height() - Config.raider_initial_position[1]),
+                                    {
+                                        "idle": self.sprite_actor.get_size("idle"),
+                                        "run": self.sprite_actor.get_size("run"),
+                                        "jump": self.sprite_actor.get_size("jump"),
+                                        "attack": self.sprite_actor.get_size("attack"),
+                                        "die": self.sprite_actor.get_size("die")
+                                    },
+                                    "idle",
+                                    collision_type=self.COLLISION_TYPE)
     self.screen_height = screen.get_height()
     self.init_chracter_sm()
     self.direction_sm = DirectionsM()
@@ -57,6 +62,9 @@ class Raider:
         self.physics.set_velocity(Vec2d(0, 0))
 
     self.sm = RaiderCharacterSM(listeners=[RaiderEventHandler()], allow_event_without_transition=True)
+
+  def die(self):
+    self.sm.trigger_die()
 
   def update(self, dt: float):
     self.sprite_actor.update(self.sm.get_state_name(), dt)

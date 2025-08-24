@@ -4,7 +4,7 @@ from Raider import Raider
 from GameConfig import Config
 from Ground import Ground
 from PhysicsComponent import PhysicsComponent
-from HealthBar import HealthBar
+from HealthBar import HealthBar2
 from Goomba import Enemy
 
 pygame.init()
@@ -21,14 +21,20 @@ space.gravity = Config.gravity
 
 ground = Ground(screen, space)
 raider = Raider(screen, space)
-health_bar = HealthBar(450, 10, screen)
+health_bar = HealthBar2(1, screen)
+
+
+def decrease_health(*args):
+  health_bar.health = max(0, health_bar.health - 5)
+
+
 enemy = Enemy(space, Config.enemy_mass, Config.enemy_initial_position, Config.enemy_radius, Config.enemy_elasticity, screen)
 
-space.on_collision(Ground.COLLISION_TYPE, PhysicsComponent.COLLISION_TYPE, begin=lambda *_a: raider.finish_jump())
+space.on_collision(Ground.COLLISION_TYPE, Raider.COLLISION_TYPE, begin=lambda *_a: raider.finish_jump())
+space.on_collision(Raider.COLLISION_TYPE, Enemy.COLLISION_TYPE, begin=decrease_health)
 dt = 0
 
 while True:
-  health_bar.health = 15
 
   index = 0
   events = pygame.event.get()
@@ -56,6 +62,9 @@ while True:
       if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
         raider.stop_run()
     index += 1
+
+  if health_bar.health <= 0:
+    raider.die()
 
   space.step(1 / FRAMES_PER_MIN)
   raider.update(dt)

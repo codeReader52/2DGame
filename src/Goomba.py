@@ -4,12 +4,14 @@ from PhysicsComponent import PhysicsComponent
 
 
 class Enemy:
+  COLLISION_TYPE = 3
 
   def __init__(self, space: Space, mass: float, init_position: Vec2d, radius: float, elasticity: float, screen: Surface):
     self.physics = PhysicsComponent(space,
                                     mass, (init_position[0], screen.get_height() - init_position[1]), {"default": (radius, radius)},
                                     "default",
-                                    elasticity=elasticity)
+                                    elasticity=elasticity,
+                                    collision_type=self.COLLISION_TYPE)
     self.radius = radius
     self.screen = screen
 
