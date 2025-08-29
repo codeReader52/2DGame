@@ -12,7 +12,7 @@ class Raider:
   COLLISION_TYPE = 2
 
   def __init__(self, screen: Surface, space: Space):
-    self.sprite_actor = SpriteComponent(screen, "./assets/Raider_sprite_list.txt", "./assets/Raider_1/")
+    self.sprite_actor = SpriteComponent(screen, "./assets/Raider_sprite_list.txt", "./assets/Raider_1/", ["die"])
     self.physics = PhysicsComponent(space,
                                     Config.raider_mass, (Config.raider_initial_position[0], screen.get_height() - Config.raider_initial_position[1]),
                                     {
@@ -34,7 +34,7 @@ class Raider:
 
       @staticmethod
       def on_enter_idle():
-        self.physics.set_velocity((0, 0))
+        self.physics.set_velocity(Vec2d(0, 0))
 
       @staticmethod
       def on_enter_jump_run(source: State):
@@ -59,6 +59,10 @@ class Raider:
 
       @staticmethod
       def on_enter_attack_idle():
+        self.physics.set_velocity(Vec2d(0, 0))
+
+      @staticmethod
+      def on_enter_die():
         self.physics.set_velocity(Vec2d(0, 0))
 
     self.sm = RaiderCharacterSM(listeners=[RaiderEventHandler()], allow_event_without_transition=True)

@@ -21,7 +21,7 @@ space.gravity = Config.gravity
 
 ground = Ground(screen, space)
 raider = Raider(screen, space)
-health_bar = HealthBar2(1, screen)
+health_bar = HealthBar2(50, screen)
 
 
 def decrease_health(*args):
