@@ -4,7 +4,7 @@ from Raider import Raider
 from GameConfig import Config
 from Ground import Ground
 from PhysicsComponent import PhysicsComponent
-from HealthBar import HealthBar2
+from HealthBar import HealthBar
 from Goomba import Enemy
 
 pygame.init()
@@ -21,7 +21,7 @@ space.gravity = Config.gravity
 
 ground = Ground(screen, space)
 raider = Raider(screen, space)
-health_bar = HealthBar2(50, screen)
+health_bar = HealthBar(50, screen)
 
 
 def decrease_health(*args):
