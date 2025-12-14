@@ -28,13 +28,19 @@ def decrease_health(*args):
   health_bar.health = max(0, health_bar.health - 5)
 
 
-enemy = Enemy(space, Config.enemy_mass, Config.enemy_initial_position, Config.enemy_radius, Config.enemy_elasticity, screen)
+enemies = []
 
 space.on_collision(Ground.COLLISION_TYPE, Raider.COLLISION_TYPE, begin=lambda *_a: raider.finish_jump())
 space.on_collision(Raider.COLLISION_TYPE, Enemy.COLLISION_TYPE, begin=decrease_health)
 dt = 0
+last_enemy_added = 0
 
 while True:
+  last_enemy_added = last_enemy_added + dt
+  if last_enemy_added > 3000:
+    enemy = Enemy(space, Config.enemy_mass, Config.enemy_initial_position, Config.enemy_radius, Config.enemy_elasticity, screen)
+    enemies.append(enemy)
+    last_enemy_added = 0
 
   index = 0
   events = pygame.event.get()
@@ -72,7 +78,11 @@ while True:
   screen.fill(BACKGROUND_COLOR)
   raider.draw()
   ground.draw()
-  enemy.draw()
+  eidx = 0
+  while eidx < len(enemies):
+    enemy = enemies[eidx]
+    enemy.draw()
+    eidx += 1
   health_bar.draw()
   pygame.display.update()
 
