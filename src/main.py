@@ -3,7 +3,7 @@ import pymunk
 from Raider import Raider
 from GameConfig import Config
 from Ground import Ground
-from PhysicsComponent import PhysicsComponent
+from pymunk import Vec2d
 from HealthBar import HealthBar
 from Goomba import Enemy
 
@@ -15,6 +15,9 @@ STOP_ATTACK_EVENT = pygame.USEREVENT + 1
 
 screen = pygame.display.set_mode((1000, 800))
 pygame.display.set_caption("2D Game")
+
+background = pygame.image.load("./assets/Background/level1.png")
+background = pygame.transform.scale(background, (1000, 800))
 
 space = pymunk.Space()
 space.gravity = Config.gravity
@@ -36,11 +39,11 @@ dt = 0
 last_enemy_added = 0
 
 while True:
-  last_enemy_added = last_enemy_added + dt
-  if last_enemy_added > 3000:
-    enemy = Enemy(space, Config.enemy_mass, Config.enemy_initial_position, Config.enemy_radius, Config.enemy_elasticity, screen)
-    enemies.append(enemy)
-    last_enemy_added = 0
+  # last_enemy_added = last_enemy_added + dt
+  # if last_enemy_added > 3000:
+  # enemy = Enemy(space, Config.enemy_mass, [350, 20], Config.enemy_radius, Config.enemy_elasticity, screen)
+  # enemies.append(enemy)
+  # last_enemy_added = 0
 
   index = 0
   events = pygame.event.get()
@@ -75,9 +78,9 @@ while True:
   space.step(1 / FRAMES_PER_MIN)
   raider.update(dt)
 
-  screen.fill(BACKGROUND_COLOR)
+  screen.blit(background, (0, 0))
   raider.draw()
-  ground.draw()
+  # ground.draw()
   eidx = 0
   while eidx < len(enemies):
     enemy = enemies[eidx]

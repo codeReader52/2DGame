@@ -32,3 +32,16 @@ class PhysicsComponent:
     self.space.remove(self.shapes[self.current_state])
     self.current_state = state
     self.space.add(self.shapes[state])
+
+  def clear(self):
+    # Clear linear velocity (set to (0, 0) vector)
+    self.body.velocity = Vec2d(0, 0)
+
+    # Clear angular velocity (set to 0 scalar)
+    self.body.angular_velocity = 0
+
+    # Clear applied force (set to (0, 0) vector)
+    self.body.force = Vec2d(0, 0)
+
+    # Clear applied torque (set to 0 scalar)
+    self.body.torque = 0
